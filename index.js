@@ -72,15 +72,45 @@ database.ref().on("child_added", function (contents) {
     console.log(trainTime);
     console.log(trainFreq);
 
+    let freqNumber = parseInt(trainFreq, 10);
+    let outputFreq = minToHourAndMin(freqNumber);
+
     let nextArrival = 0;
     let minAway = 0;
 
     // Add each train's data into the table
     $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDest + "</td><td>" +
-        trainFreq + "</td><td>" + nextArrival + "</td><td>" + minAway + "</td></tr>");
+        outputFreq + "</td><td>" + nextArrival + "</td><td>" + minAway + "</td></tr>");
+
+    // Add current time
+    let now = moment();
+    console.log("now ", now);
+    $("#current-time").text(`Current time: ${now.format("H:mm")}`);
 
 });
 
+
+// convert minutes to hours and minutes
+
+function minToHourAndMin (numMinutes){
+    let string = "";
+    let hourString = "";
+    let hours = Math.floor(numMinutes/60);
+    console.log("hours ", hours);
+    if (hours === 0) { 
+        hourString = ""
+    } else {
+        hourString = hours.toString() + "h";
+    }
+    let minutes = numMinutes % 60;
+    string = hourString + minutes.toString() + "m";
+    return string;
+}
+
+
+function anotherFunction() {
+    return "usefulstuff";
+}
 
 
 // firebase.initializeApp(config);
