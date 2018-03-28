@@ -15,9 +15,6 @@ firebase.initializeApp(config);
 // Create a variable to reference the database
 let database = firebase.database();
 
-
-
-
 $(".btn").on("click", function (event) {
     event.preventDefault();
     // This line of code will grab the input from the textbox
@@ -30,9 +27,59 @@ $(".btn").on("click", function (event) {
     console.log(trainDest);
     console.log(trainTime);
     console.log(trainFreq);
+
+    // Creates local "temporary" object for holding employee data
+    let newTrain = {
+        tname: trainName,
+        tdest: trainDest,
+        tstart: trainTime,
+        tfreq: trainFreq,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    // Uploads employee data to the database
+    database.ref().push(newTrain);
+
+    // Logs everything to console
+    console.log(newTrain.tname);
+    console.log(newTrain.tdest);
+    console.log(newTrain.tstart);
+    console.log(newTrain.tfreq);
+
+    // Clears all of the text-boxes
+    $("#name").val("");
+    $("#destination").val("");
+    $("#train-time").val("");
+    $("#freq").val("");
+
 });
 
+// Upon receiving a new entry, output the data to the database
 
+database.ref().on("child_added", function (contents) {
+
+    console.log(contents.val());
+
+    // Store everything into a variable.
+    let trainName = contents.val().tname;
+    let trainDest = contents.val().tdest;
+    let trainTime = contents.val().tstart;
+    let trainFreq = contents.val().tfreq;
+
+    // confirm Info
+    console.log(trainName);
+    console.log(trainDest);
+    console.log(trainTime);
+    console.log(trainFreq);
+
+    let nextArrival = 0;
+    let minAway = 0;
+
+    // Add each train's data into the table
+    $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDest + "</td><td>" +
+        trainFreq + "</td><td>" + nextArrival + "</td><td>" + minAway + "</td></tr>");
+
+});
 
 
 
