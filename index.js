@@ -23,11 +23,6 @@ $(".btn").on("click", function (event) {
     let trainTime = $("#train-time").val().trim();
     let trainFreq = $("#freq").val().trim();
 
-    console.log(trainName);
-    console.log(trainDest);
-    console.log(trainTime);
-    console.log(trainFreq);
-
     // Creates local "temporary" object for holding employee data
     let newTrain = {
         tname: trainName,
@@ -39,12 +34,6 @@ $(".btn").on("click", function (event) {
 
     // Uploads employee data to the database
     database.ref().push(newTrain);
-
-    // Logs everything to console
-    console.log(newTrain.tname);
-    console.log(newTrain.tdest);
-    console.log(newTrain.tstart);
-    console.log(newTrain.tfreq);
 
     // Clears all of the text-boxes
     $("#name").val("");
@@ -69,17 +58,9 @@ database.ref().on("child_added", function (contents) {
     let trainTime = contents.val().tstart;
     let trainFreq = contents.val().tfreq;
 
-    // confirm Info
-    console.log(trainName);
-    console.log(trainDest);
-    console.log(trainTime);
-    console.log(trainFreq);
-
     //change time between trains to an number, and the output into hours and minutes
     let freqNumber = parseInt(trainFreq, 10);
     let outputFreq = minToHourAndMin(freqNumber);
-
-
 
     //calculate next arrival
 
@@ -87,9 +68,10 @@ database.ref().on("child_added", function (contents) {
     let minutesAway = 0;
     let firstTrainTime = moment.duration(trainTime).asMinutes();
     let timeNow = moment.duration(currentTime).asMinutes();
-    console.log("firstTrainTime ", firstTrainTime);
-    console.log("currentTime ", currentTime);
+
     console.log("timeNow ", timeNow);
+    console.log("originalfirstTrainTime ", firstTrainTime);
+
     if (timeNow <= firstTrainTime) {
         minutesAway = firstTrainTime - timeNow;
     } else {
@@ -99,30 +81,22 @@ database.ref().on("child_added", function (contents) {
         minutesAway = firstTrainTime - timeNow;
     };
 
-// at this point, firstTrainTime IS the next arrival and minutesAway is minutes away
-//need to reformat them so that we can output them
-
-    console.log("minutesAway ", minutesAway);
-    console.log(typeof minutesAway)
     console.log("firstTrainTime ", firstTrainTime);
+    console.log("minutesAway ", minutesAway);
+
+// at this point, firstTrainTime IS the next arrival and minutesAway is minutes away
+// need to reformat them so that we can output them
 
     //change minutes away to minutes and hours
     let minAway = minToHourAndMin(minutesAway);
 
     //change next arrival time to hh:mm
-    //let nextArrival = 0;
-    //let nextArrival = moment(firstTrainTime).format("h:mm A");
-
-    let tempHours = moment.duration(firstTrainTime, 'minutes').asHours();
-    let nextArrival = moment(tempHours, 'hours').format("hh:mm A");
-
-    console.log ("nextArrival ", nextArrival);
+    let nextArrival = getTimeFromMins(firstTrainTime);
+    console.log("nextArrival ", nextArrival);
 
     // Add each train's data into the table
     $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDest + "</td><td>" +
         outputFreq + "</td><td>" + nextArrival + "</td><td>" + minAway + "</td></tr>");
-
-
 
 });
 
@@ -133,16 +107,35 @@ function minToHourAndMin (numMinutes){
     let string = "";
     let hourString = "";
     let hours = Math.floor(numMinutes/60);
-    console.log("hours ", hours);
+
     if (hours === 0) { 
         hourString = ""
     } else {
         hourString = hours.toString() + "h";
-    }
+    };
     let minutes = numMinutes % 60;
     string = hourString + minutes.toString() + "m";
     return string;
 }
+
+function getTimeFromMins(min) {
+    let string = "";
+    let h = Math.floor(min / 60);
+    let m = min % 60;
+    let ampm = "am"
+    if (h > 12){
+        h = h - 12;
+        ampm = "pm";
+    }
+    let hrs = h.toString();
+    let mins = m.toString();
+    if (m === 0 ) {
+        mins = "00";
+    }
+    string = hrs + ":" + mins + ampm;
+    console.log ("string ", string)
+    return string;
+};
 
 var newTime = moment.duration("23:59").asMinutes();
 console.log("23:59 as minutes ", newTime);
