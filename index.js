@@ -123,14 +123,17 @@ function getTimeFromMins(min) {
     let h = Math.floor(min / 60);
     let m = min % 60;
     let ampm = "am"
-    if (h > 12){
+    if (h > 12 && h < 24){
         h = h - 12;
         ampm = "pm";
     }
+    if (h === 24) {
+        h = h - 12
+    }
     let hrs = h.toString();
     let mins = m.toString();
-    if (m === 0 ) {
-        mins = "00";
+    if (m < 10 ) {
+        mins = "0" + mins;
     }
     string = hrs + ":" + mins + ampm;
     console.log ("string ", string)
