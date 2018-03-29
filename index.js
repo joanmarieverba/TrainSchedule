@@ -75,33 +75,48 @@ database.ref().on("child_added", function (contents) {
     console.log(trainTime);
     console.log(trainFreq);
 
+    //change time between trains to an number, and the output into hours and minutes
     let freqNumber = parseInt(trainFreq, 10);
     let outputFreq = minToHourAndMin(freqNumber);
 
-    let nextArrival = 0;
- 
+
 
     //calculate next arrival
+
+    //make the strings into numbers
     let minutesAway = 0;
     let firstTrainTime = moment.duration(trainTime).asMinutes();
-    if (currentTime <= firstTrainTime) {
-        minutesAway = currentTime - firstTrainTime;
+    let timeNow = moment.duration(currentTime).asMinutes();
+    console.log("firstTrainTime ", firstTrainTime);
+    console.log("currentTime ", currentTime);
+    console.log("timeNow ", timeNow);
+    if (timeNow <= firstTrainTime) {
+        minutesAway = firstTrainTime - timeNow;
     } else {
-        while (currentTime > firstTrainTime) {
-            firstTrainTime = firstTrainTime + trainFreq;
+        while (timeNow > firstTrainTime) {
+            firstTrainTime = firstTrainTime + freqNumber;
         }
-        minutesAway = firstTrainTime - currentTime;
+        minutesAway = firstTrainTime - timeNow;
     };
 
-
 // at this point, firstTrainTime IS the next arrival and minutesAway is minutes away
-//need to find out what format they're in so that we can output them
+//need to reformat them so that we can output them
 
+    console.log("minutesAway ", minutesAway);
+    console.log(typeof minutesAway)
+    console.log("firstTrainTime ", firstTrainTime);
 
+    //change minutes away to minutes and hours
+    let minAway = minToHourAndMin(minutesAway);
+
+    //change next arrival time to hh:mm
+    //let nextArrival = 0;
+    let nextArrival = moment(1440).format("h:mm A");
+    console.log ("nextArrival ", nextArrival);
 
     // Add each train's data into the table
     $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDest + "</td><td>" +
-        outputFreq + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
+        outputFreq + "</td><td>" + nextArrival + "</td><td>" + minAway + "</td></tr>");
 
 
 
