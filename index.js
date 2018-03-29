@@ -58,9 +58,12 @@ $(".btn").on("click", function (event) {
 
 database.ref().on("child_added", function (contents) {
 
-    console.log(contents.val());
+    // Retrieve current time
+    let now = moment();
+    let currentTime = now.format("H:mm")
+    $("#current-time").text(`Current time: ${currentTime}`);
 
-    // Store everything into a variable.
+    // Place items retrieved by firebase into variables
     let trainName = contents.val().tname;
     let trainDest = contents.val().tdest;
     let trainTime = contents.val().tstart;
@@ -76,16 +79,31 @@ database.ref().on("child_added", function (contents) {
     let outputFreq = minToHourAndMin(freqNumber);
 
     let nextArrival = 0;
-    let minAway = 0;
+ 
+
+    //calculate next arrival
+    let minutesAway = 0;
+    let firstTrainTime = moment.duration(trainTime).asMinutes();
+    if (currentTime <= firstTrainTime) {
+        minutesAway = currentTime - firstTrainTime;
+    } else {
+        while (currentTime > firstTrainTime) {
+            firstTrainTime = firstTrainTime + trainFreq;
+        }
+        minutesAway = firstTrainTime - currentTime;
+    };
+
+
+// at this point, firstTrainTime IS the next arrival and minutesAway is minutes away
+//need to find out what format they're in so that we can output them
+
+
 
     // Add each train's data into the table
     $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDest + "</td><td>" +
-        outputFreq + "</td><td>" + nextArrival + "</td><td>" + minAway + "</td></tr>");
+        outputFreq + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
 
-    // Add current time
-    let now = moment();
-    console.log("now ", now);
-    $("#current-time").text(`Current time: ${now.format("H:mm")}`);
+
 
 });
 
@@ -107,9 +125,11 @@ function minToHourAndMin (numMinutes){
     return string;
 }
 
+var newTime = moment.duration("23:59").asMinutes();
+console.log("23:59 as minutes ", newTime);
 
-function anotherFunction() {
-    return "usefulstuff";
+function calcNextArrival() {
+    
 }
 
 
