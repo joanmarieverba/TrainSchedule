@@ -111,7 +111,11 @@ database.ref().on("child_added", function (contents) {
 
     //change next arrival time to hh:mm
     //let nextArrival = 0;
-    let nextArrival = moment(firstTrainTime).format("h:mm A");
+    //let nextArrival = moment(firstTrainTime).format("h:mm A");
+
+    let tempHours = moment.duration(firstTrainTime, 'minutes').asHours();
+    let nextArrival = moment(tempHours, 'hours').format("hh:mm A");
+
     console.log ("nextArrival ", nextArrival);
 
     // Add each train's data into the table
