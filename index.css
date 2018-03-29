@@ -7,3 +7,10 @@ body {
     color: white;
 }
 
+.panel > .panel-info {
+    background-image: none;
+    background-color: #20315A; 
+    color: white;
+    font-weight: bold;
+    padding-left: 75vw;
+}
