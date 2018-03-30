@@ -106,15 +106,23 @@ database.ref().on("child_added", function (contents) {
 function minToHourAndMin (numMinutes){
     let string = "";
     let hourString = "";
-    let hours = Math.floor(numMinutes/60);
+    let minuteString = "";
 
+    let hours = Math.floor(numMinutes/60);
     if (hours === 0) { 
-        hourString = ""
+        hourString = "";
     } else {
         hourString = hours.toString() + "h";
     };
+
     let minutes = numMinutes % 60;
-    string = hourString + minutes.toString() + "m";
+    if (minutes === 0) {
+        minuteString = "";
+    } else {
+        minuteString = minutes.toString() + "m";
+    };
+
+    string = hourString + minuteString;
     return string;
 }
 
@@ -128,7 +136,7 @@ function getTimeFromMins(min) {
         ampm = "pm";
     }
     if (h === 24) {
-        h = h - 12
+        h = h - 12;
     }
     let hrs = h.toString();
     let mins = m.toString();
