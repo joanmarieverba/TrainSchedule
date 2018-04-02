@@ -130,6 +130,9 @@ function getTimeFromMins(min) {
         h = h - 12;
         ampm = "pm";
     }
+    if (h === 0) {
+        h = 12;
+    }
     if (h === 12) { 
         ampm = "pm";
     }
